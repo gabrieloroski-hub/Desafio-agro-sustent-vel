@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desafio Agro-Sustentável | Agrinho 2026</title>
+    <style>
+        :root {
+            --primary-color: #2e7d32; /* Verde sustentável */
+            --secondary-color: #8d6e63; /* Marrom terra */
+            --bg-color: #f1f8e9; /* Fundo claro e limpo */
+            --card-color: #ffffff;
+            --text-color: #333333;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-content: center;
+            min-height: 100vh;
+        }
+
+        .quiz-container {
+            background-color: var(--card-color);
+            border-radius: 15px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 650px;
+            padding: 30px;
+            box-sizing: border-box;
+            border-top: 8px solid var(--primary-color);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: var(--secondary-color);
+            font-size: 14px;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .progress-bar {
+            background-color: #e0e0e0;
+            height: 8px;
+            border-radius: 4px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        .progress {
+            background-color: var(--primary-color);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .question {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .options-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .option-btn {
+            background-color: #f5f5f5;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 12px;
+            width: 100%;
+            text-align: left;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-sizing: border-box;
+        }
+
+        .option-btn:hover:not([disabled]) {
+            background-color: #e8f5e9;
+            border-color: var(--primary-color);
+        }
+
+        .option-btn.correct {
+            background-color: #c8e6c9 !important;
+            border-color: #4caf50 !important;
+            color: #2e7d32;
+            font-weight: bold;
+        }
+
+        .option-btn.wrong {
+            background-color: #ffcdd2 !important;
+            border-color: #f44336 !important;
+            color: #c62828;
+        }
+
+        .next-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-size: 16px;
+            cursor: pointer;
+            float: right;
+            display: none;
+            font-weight: bold;
+        }
+
+        .next-btn:hover {
+            background-color: #1b5e20;
+        }
+
+        .result-container {
+            text-align: center;
+            display: none;
+        }
+
+        .result-score {
+            font-size: 48px;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin: 20px 0;
+        }
+
+        .restart-btn {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <div id="quiz-screen">
+        <h1>Desafio Agro-Sustentável</h1>
+        <div class="subtitle">Agrinho 2026</div>
+        
+        <div class="progress-bar">
+            <div class="progress" id="progress"></div>
+        </div>
+
+        <div class="question" id="question-text">Carregando pergunta...</div>
+        <div class="options-list" id="options-container"></div>
+        
+        <button class="next-btn" id="next-button" onclick="nextQuestion()">Próxima</button>
+    </div>
+
+    <div id="result-screen" class="result-container">
+        <h1>Quiz Concluído!</h1>
+        <div class="subtitle">Seu resultado no Agrinho 2026</div>
+        <div class="result-score" id="score-text">0/0</div>
+        <p id="feedback-text">Bom trabalho!</p>
+        <button class="restart-btn" onclick="restartQuiz()">Tentar Novamente</button>
+    </div>
+</div>
+
+<script>
+    // Banco de perguntas focado no tema solicitado
+    const quizData = [
+        {
+            question: "O Brasil é um dos maiores produtores de alimentos do mundo, mas importa grande parte dos fertilizantes (NPK). Qual é uma alternativa sustentável para reduzir essa dependência?",
+            options: [
+                "Aumentar o uso de adubação química sem controle.",
+                "Utilizar biofertilizantes, fixação biológica de nitrogênio e rochagem.",
+                "Substituir toda a plantação por florestas nativas de uma só vez.",
+                "Proibir a produção de culturas que exigem muitos nutrientes."
+            ],
+            correct: 1
+        },
+        {
+            question: "Para evitar o desmatamento ilegal e manter o 'Agro-Forte', qual estratégia permite aumentar a produção sem abrir novas áreas de mata nativa?",
+            options: [
+                "Aumentar o desmatamento apenas em áreas de cerrado.",
+                "Deixar a terra descansar por décadas sem produzir nada.",
+                "Intensificar a produção em pastagens degradadas e usar a Integração Lavoura-Pecuária-Floresta (ILPF).",
+                "Abandonar o uso de tecnologia e maquinários no campo."
+            ],
+            correct: 2
+        },
+        {
+            question: "A agricultura de precisão ajuda no equilíbrio entre produção e meio ambiente porque:",
+            options: [
+                "Aplica fertilizantes e defensivos apenas na quantidade exata e no local necessário, evitando desperdícios.",
+                "Garante que todas as plantas cresçam exatamente com o mesmo tamanho físico.",
+                "Elimina a necessidade de qualquer tipo de manejo ou cuidado com o solo.",
+                "Serve apenas para monitorar o clima através de satélites sem alterar o manejo."
+            ],
+            correct: 0
+        },
+        {
+            question: "O que diz o Código Florestal Brasileiro sobre a preservação nas propriedades rurais?",
+            options: [
+                "Toda propriedade rural deve ser transformada em reserva ecológica integral.",
+                "Não há obrigatoriedade de preservação se a produção for de grãos.",
+                "O produtor pode desmatar 100% se usar fertilizantes orgânicos.",
+                "Exige a manutenção da Reserva Legal e a proteção das Áreas de Preservação Permanente (APPs), como margens de rios."
+            ],
+            correct: 3
+        }
+    ];
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+
+    const questionText = document.getElementById("question-text");
+    const optionsContainer = document.getElementById("options-container");
+    const nextButton = document.getElementById("next-button");
+    const progress = document.getElementById("progress");
+    const quizScreen = document.getElementById("quiz-screen");
+    const resultScreen = document.getElementById("result-screen");
+    const scoreText = document.getElementById("score-text");
+    const feedbackText = document.getElementById("feedback-text");
+
+    function loadQuestion() {
+        resetState();
+        let currentQuestion = quizData[currentQuestionIndex];
+        questionText.innerText = `${currentQuestionIndex + 1}. ${currentQuestion.question}`;
+        
+        // Atualiza a barra de progresso
+        const progressPercentage = ((currentQuestionIndex) / quizData.length) * 100;
+        progress.style.width = `${progressPercentage}%`;
+
+        currentQuestion.options.forEach((option, index) => {
+            const button = document.createElement("button");
+            button.innerText = option;
+            button.classList.add("option-btn");
+            button.addEventListener("click", () => selectOption(button, index));
+            optionsContainer.appendChild(button);
+        });
+    }
+
+    function resetState() {
+        nextButton.style.display = "none";
+        while (optionsContainer.firstChild) {
+            optionsContainer.removeChild(optionsContainer.firstChild);
+        }
+    }
+
+    function selectOption(selectedBtn, optionIndex) {
+        const correctAnswerIndex = quizData[currentQuestionIndex].correct;
+        const allButtons = optionsContainer.querySelectorAll(".option-btn");
+
+        // Desabilita todos os botões para o usuário não clicar de novo
+        allButtons.forEach(btn => btn.disabled = true);
+
+        if (optionIndex === correctAnswerIndex) {
+            selectedBtn.classList.add("correct");
+            score++;
+        } else {
+            selectedBtn.classList.add("wrong");
+            // Mostra a correta para o usuário aprender
+            allButtons[correctAnswerIndex].classList.add("correct");
+        }
+
+        nextButton.style.display = "block";
+    }
+
+    function nextQuestion() {
+        currentQuestionIndex++;
+        if (currentQuestionIndex < quizData.length) {
+            loadQuestion();
+        } else {
+            showResults();
+        }
+    }
+
+    function showResults() {
+        progress.style.width = "100%";
+        quizScreen.style.display = "none";
+        resultScreen.style.display = "block";
+        scoreText.innerText = `${score} / ${quizData.length}`;
+        
+        if (score === quizData.length) {
+            feedbackText.innerText = "Incrível! Você domina o equilíbrio entre produção e sustentabilidade! 🌱🚜";
+        } else if (score >= quizData.length / 2) {
+            feedbackText.innerText = "Bom trabalho! Você entende os desafios do agro do futuro. 🌾";
+        } else {
+            feedbackText.innerText = "Vale a pena revisar os conteúdos sobre o agro sustentável para ajudar o nosso futuro! 🌎";
+        }
+    }
+
+    function restartQuiz() {
+        currentQuestionIndex = 0;
+        score = 0;
+        quizScreen.style.display = "block";
+        resultScreen.style.display = "none";
+        loadQuestion();
+    }
+
+    // Inicia o quiz ao carregar a página
+    loadQuestion();
+</script>
+
+</body>
+</html>
